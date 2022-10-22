@@ -1,0 +1,65 @@
+---
+title: "Two Sample Ttest Power Analysis"
+output:
+  rmarkdown::github_document: default
+  github_notebook: default
+---
+
+```{r echo=FALSE, include = FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=TRUE)
+```
+
+### Use case framing
+- 
+
+### Why a power analysis?
+- Power analysis can help us determine the optimal sample size per group for an experiment.
+- We're interested in deriving the power of an expected or observed set of experiment data.
+
+### What do the various inputs represent?
+- Two sample t test power analysis uses the following inputs.
+- Power, Sig Level, Sample Size, N 
+
+- Sig level: probability of observing an effect by chance
+- Power: probability of detecting an effect when one exists
+- Effect: 
+- Delta:
+- Standard deviation:
+
+```{r}
+library(tidyverse)
+library(infer)
+library(ggrepel)
+library(patchwork)
+```
+
+```{r}
+ttest_target_sample_size_fun <- function(delta_var, sd_var) {
+      res <- power.t.test(delta = delta_var, sd = sd_var, 
+                   sig.level = 0.05, power = 0.8, 
+                   type = "two.sample")$n
+      ceiling(res)
+}
+
+ttest_target_sample_size_fun(delta_var = 0.75, sd_var = 2.25)
+
+expand_grid(delta_input = seq(1, 5, 0.5),
+            sd_input = seq(0.25, 5, 0.25)) %>%
+      rowwise() %>%
+      mutate(samples_per_group = ttest_target_sample_size_fun(
+                  delta_var =delta_input, sd_var = sd_input
+            )
+      ) %>%
+      ggplot(aes(x=sd_input,
+                 y=samples_per_group,
+                 group=factor(delta_input),
+                 color=factor(delta_input))) +
+      geom_point() +
+      geom_line()
+```
+### Related topics / further research
+- Variance reduction techniques which can help speed up A/B tests and/or increase statistical power for a test
+-
+
+
+
