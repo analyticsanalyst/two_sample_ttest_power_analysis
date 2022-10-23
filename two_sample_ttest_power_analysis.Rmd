@@ -1,5 +1,5 @@
 ---
-title: "Two Sample Ttest Power Analysis"
+title: "Two Sample T Test Power Analysis"
 output:
   rmarkdown::github_document: default
   github_notebook: default
@@ -11,6 +11,8 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=
 
 ### Use case framing
 - 
+
+Welch t test (two independent sample t test with unequal variances and same or different samples sizes)
 
 ### Why a power analysis?
 - Power analysis can help us determine the optimal sample size per group for an experiment.
@@ -32,6 +34,15 @@ library(infer)
 library(ggrepel)
 library(patchwork)
 ```
+
+```{r}
+?power.t.test
+```
+
+pwr package vs base R
+
+using cohens D
+
 
 ```{r}
 ttest_target_sample_size_fun <- function(delta_var, sd_var) {
@@ -60,6 +71,7 @@ expand_grid(delta_input = seq(1, 5, 0.5),
 ### Related topics / further research
 - Variance reduction techniques which can help speed up A/B tests and/or increase statistical power for a test
 -
+
 
 
 
