@@ -1,5 +1,5 @@
 ---
-title: "Two Sample T Test Power Analysis"
+title: "Two Sample T-test Power Analysis"
 output:
   rmarkdown::github_document: default
   github_notebook: default
@@ -9,39 +9,69 @@ output:
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=TRUE)
 ```
 
-### Use case framing
-- 
+### Practical application
+- Setup: we are tasked with running an online A/B test with a primary metric of revenue per visitor (e.g. total revenue during test window / unique visitors during test window). Our test will have a control group (status quo experience) and a treatment group (new experience aimed at increasing revenue per visitor).
+- How long should we run the test? Test duration is influenced
+- Tradeoffs: 
+- Hypothesis test: 
 
-Welch t test (two independent sample t test with unequal variances and same or different samples sizes)
-
-### Why a power analysis?
-- Power analysis can help us determine the optimal sample size per group for an experiment.
-- We're interested in deriving the power of an expected or observed set of experiment data.
+### Terms to know
+- **Minimum detectable effect**:
+- **Power**: probability of detecting an effect when one exists
+- **Significance level**: probability of observing an effect by chance
+- **Effect size**: 
+- **Per test group sample size**:
+- **Power analysis**: in the context of an A/B test, power analysis is often used to derived a target sample size per group ahead of a test. The target sample size per group sets expectations on test duration and signals when to stop the experiment.
+- **Welch t test (two independent sample t test with unequal variances and same or different samples sizes)**: 
 
 ### What do the various inputs represent?
-- Two sample t test power analysis uses the following inputs.
+- Two sample t t
+est power analysis uses the following inputs.
 - Power, Sig Level, Sample Size, N 
 
-- Sig level: probability of observing an effect by chance
-- Power: probability of detecting an effect when one exists
-- Effect: 
-- Delta:
-- Standard deviation:
+Twitter post: https://blog.twitter.com/engineering/en_us/a/2016/power-minimal-detectable-effect-and-bucket-size-estimation-in-ab-tests
+
+What is the formula for power?
 
 ```{r}
 library(tidyverse)
-library(infer)
-library(ggrepel)
-library(patchwork)
+library(pwr)
 ```
 
 ```{r}
 ?power.t.test
+
+pwr.t.test(n = NULL, 
+           d = , 
+           sig.level = 0.05, 
+           power = 0.8, 
+           type = 'two.sample',
+           alternative = "two.sided")
+
+pwr.t2n.test(d = 1/0.25, 
+             sig.level = 0.05, 
+             power = 0.8, 
+             n1 = NULL,
+             n2 = NULL,
+             alternative = "two.sided")
+
+
+power.t.test(delta = delta_var, sd = sd_var, 
+                   sig.level = 0.05, power = 0.8, 
+                   alternative = "two.sided")
 ```
 
 pwr package vs base R
 
 using cohens D
+
+```{r}
+cyl_4 <- mpg %>% filter(cyl==4)
+cyl_6 <- mpg %>% filter(cyl==6)
+
+
+t.test(cyl_4$hwy, cyl_6$hwy)
+```
 
 
 ```{r}
@@ -68,10 +98,11 @@ expand_grid(delta_input = seq(1, 5, 0.5),
       geom_point() +
       geom_line()
 ```
+
 ### Related topics / further research
 - Variance reduction techniques which can help speed up A/B tests and/or increase statistical power for a test
 -
-
+- 
 
 
 
