@@ -10,53 +10,39 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=
 ```
 
 ### Practical application
-- Setup: we are tasked with running an online A/B test with a primary metric of revenue per visitor (e.g. total revenue during test window / unique visitors during test window). Our test will have a control group (status quo experience) and a treatment group (new experience aimed at increasing revenue per visitor).
-- How long should we run the test? Test duration is influenced
-- Tradeoffs: 
-- Hypothesis test: 
+- **Setup**: we are tasked with running an online A/B test with a primary metric of revenue per visitor (e.g. total revenue during test window / unique visitors during test window). Our test will have a control group (status quo experience) and a treatment group (new experience aimed at increasing revenue per visitor). We'll use a Welch two independent sample t-test with unequal variances to assess if there's a difference in means between the control and treatment group.
+- **Null hypothesis**: control mean - treatment mean = 0 (e.g. no difference in means between groups)
+- **Alternative hypothesis**: control mean - treatment mean != 0 (e.g. difference in means between groups)
+- **Estimating test duration with power analysis**: we can use power analysis to derive a target sample size per test group. For a given traffic allocation, the target sample size per group sets expectations on test duration and establishes test stopping criteria.
 
-### Terms to know
-- **Minimum detectable effect**:
-- **Power**: probability of detecting an effect when one exists
+### Recap of factors that influence test duration
+- **Minimum detectable effect**: The MDE represents X. holding other factors constant, there is an inverse relationship between minimum detectable effect size and sample size. In other words, smaller the effect size of interest the larger the sample size required to detect. 
 - **Significance level**: probability of observing an effect by chance
-- **Effect size**: 
-- **Per test group sample size**:
-- **Power analysis**: in the context of an A/B test, power analysis is often used to derived a target sample size per group ahead of a test. The target sample size per group sets expectations on test duration and signals when to stop the experiment.
-- **Welch t test (two independent sample t test with unequal variances and same or different samples sizes)**: 
+- **Power**: probability of detecting an effect when one exists. A test is underpowered when there <>. A test is overpowered when <>.
+- **Time to collect target sample size by group**: varies based on test traffic allocation and experiment surface area popularity. For example, an experiment on Google's home page can hit a sample size target very fast vs a small B2B startup home page which isn't getting much taffic.
 
-### What do the various inputs represent?
-- Two sample t t
-est power analysis uses the following inputs.
-- Power, Sig Level, Sample Size, N 
+### Formula for power
 
-Twitter post: https://blog.twitter.com/engineering/en_us/a/2016/power-minimal-detectable-effect-and-bucket-size-estimation-in-ab-tests
-
-What is the formula for power?
+### Formula for target sample size
 
 ```{r}
 library(tidyverse)
 library(pwr)
 ```
+### Using pwr package vs power... base functions?
+- returns same result
 
 ```{r}
 ?power.t.test
 
 pwr.t.test(n = NULL, 
-           d = , 
+           d = 0.05/0.25, 
            sig.level = 0.05, 
            power = 0.8, 
            type = 'two.sample',
            alternative = "two.sided")
 
-pwr.t2n.test(d = 1/0.25, 
-             sig.level = 0.05, 
-             power = 0.8, 
-             n1 = NULL,
-             n2 = NULL,
-             alternative = "two.sided")
-
-
-power.t.test(delta = delta_var, sd = sd_var, 
+power.t.test(delta = 0.05, sd = 0.25, 
                    sig.level = 0.05, power = 0.8, 
                    alternative = "two.sided")
 ```
@@ -102,7 +88,6 @@ expand_grid(delta_input = seq(1, 5, 0.5),
 ### Related topics / further research
 - Variance reduction techniques which can help speed up A/B tests and/or increase statistical power for a test
 -
-- 
 
 
 
