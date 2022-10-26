@@ -21,9 +21,60 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=
 - **Power**: probability of detecting an effect when one exists. A test is underpowered when there <>. A test is overpowered when <>.
 - **Time to collect target sample size by group**: varies based on test traffic allocation and experiment surface area popularity. For example, an experiment on Google's home page can hit a sample size target very fast vs a small B2B startup home page which isn't getting much taffic.
 
-### Formula for power
+### Gaining intuition for power
+
+
+
+
+```{r}
+n <- 50
+c_mu <- 50
+c_s <- 12
+t_mu <- 45
+t_s <- 7
+
+welch_ttest_sim <- function(group_sample_size, 
+                            control_pop_mean,
+                            control_pop_sd,
+                            treatment_pop_mean,
+                            treatment_pop_sd) {
+  ### generate random sample for control with pop mean and sd inputs
+  control <- rnorm(group_sample_size, 
+                   mean = control_pop_mean, 
+                   sd = control_pop_sd)
+  ### generate random sample for treatment with pop mean and sd inputs
+  treatment <- rnorm(group_sample_size, 
+                     mean = treatment_pop_mean, 
+                     sd = treatment_pop_sd)
+  t.test(control, treatment)$p.value
+}
+
+### 
+sim_results <- replicate(10000, welch_ttest_sim(n, c_mu, c_s, t_mu, t_s)) 
+
+### empirical power: proportion of tests that return a pvalue below 0.05
+sum(sim_results < 0.05)/length(sim_results)
+```
+### Prove simulation ties with power function
+
+```{r}
+### pooled sd simple formula: sqrt((s1^2 _ s2^2)/2)
+### ties with Cohens formula: sqrt(((n1-1)s1^2 +  (n2-1)s2^2) / (n1+n2-2))
+pooled_sd <- sqrt((c_s^2 + t_s^2)/2)
+
+diff_between_means <- c_mu-t_mu
+  
+effect_size <- diff_between_means/pooled_sd
+
+pwr.t.test(n = 50, d = effect_size, sig.level = 0.05,
+           type="two.sample",alternative="two.sided") 
+```
+
+
 
 ### Formula for target sample size
+- 
+
 
 ```{r}
 library(tidyverse)
