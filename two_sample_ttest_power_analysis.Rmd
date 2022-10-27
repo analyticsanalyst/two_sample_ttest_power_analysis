@@ -16,15 +16,15 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=
 - **Estimating test duration with power analysis**: we can use power analysis to derive a target sample size per test group. For a given traffic allocation, the target sample size per group sets expectations on test duration and establishes test stopping criteria.
 
 ### Recap of factors that influence test duration
-- **Minimum detectable effect**: The MDE represents X. holding other factors constant, there is an inverse relationship between minimum detectable effect size and sample size. In other words, smaller the effect size of interest the larger the sample size required to detect. 
-- **Significance level**: probability of observing an effect by chance
-- **Power**: probability of detecting an effect when one exists. A test is underpowered when there <>. A test is overpowered when <>.
-- **Time to collect target sample size by group**: varies based on test traffic allocation and experiment surface area popularity. For example, an experiment on Google's home page can hit a sample size target very fast vs a small B2B startup home page which isn't getting much taffic.
+- **Minimum detectable effect**: The MDE represents smallest practical . holding other factors constant, there is an inverse relationship between minimum detectable effect size and sample size. In other words, smaller the effect size of interest the larger the sample size required to detect. 
+- **Significance level**: probability of observing an effect by chance. In other words, probability of rejecting the null hypothesis when the null hypothesis is true (i.e. claiming there is an effect when there isn't).
+- **Power**: probability of detecting an effect when one exists. We call a test underpowered when the sample size is not sufficient to detect an effect size of interest. A test is overpowered when we greatly surpass the target sample size per group.
+- **Time to collect target sample size by group**: varies based on test traffic allocation and experiment surface area popularity. For example, an experiment on Google's home page can hit a sample size target very fast vs a small B2B startup home page which isn't getting much traffic.
 
 ### Gaining intuition for power
-
-
-
+- We can simulate 10k iterations of an A/B test below.
+- For the 10k simulated A/B tests, empirical power represents the proportion of pvalues below our significance level of 0.05. 
+- TODO: NEEDS further research to make sure I'm tracking.
 
 ```{r}
 n <- 50
@@ -52,7 +52,7 @@ welch_ttest_sim <- function(group_sample_size,
 ### 
 sim_results <- replicate(10000, welch_ttest_sim(n, c_mu, c_s, t_mu, t_s)) 
 
-### empirical power: proportion of tests that return a pvalue below 0.05
+### empirical power: proportion of simulation pvalues below 0.05
 sum(sim_results < 0.05)/length(sim_results)
 ```
 ### Prove simulation ties with power function
