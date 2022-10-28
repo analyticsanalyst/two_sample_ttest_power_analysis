@@ -10,23 +10,26 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, dpi=700, fig.cap=
 ```
 
 ### Practical application
-- **Setup**: we are tasked with running an online A/B test with a primary metric of revenue per visitor (e.g. total revenue during test window / unique visitors during test window). Our test will have a control group (status quo experience) and a treatment group (new experience aimed at increasing revenue per visitor). We'll use a Welch two independent sample t-test with unequal variances to assess if there's a difference in means between the control and treatment group.
+- **Setup**: we are tasked with running an online A/B test with a primary metric of revenue per visitor (e.g. total revenue during test window / unique visitors during test window). Our test will have a control group (status quo experience) and a treatment group (new experience aimed at increasing revenue per visitor). We'll use a Welch two independent sample t-test with unequal variances to assess if there's a difference in means between the control and treatment group means.
 - **Null hypothesis**: control mean - treatment mean = 0 (e.g. no difference in means between groups)
 - **Alternative hypothesis**: control mean - treatment mean != 0 (e.g. difference in means between groups)
-- **Estimating test duration with power analysis**: we can use power analysis to derive a target sample size per test group. For a given traffic allocation, the target sample size per group sets expectations on test duration and establishes test stopping criteria.
+- **Estimating test duration with power analysis**: we can use power analysis to derive a target sample size per test group. For a given traffic allocation, the target sample size per group sets expectations on test duration and establishes test stopping criteria. An experimenter users can leverage historical test surface visitor data to derive how the target sample size will take to collect.
 
 ### Recap of factors that influence test duration
-- **Minimum detectable effect**: The MDE represents smallest practical . holding other factors constant, there is an inverse relationship between minimum detectable effect size and sample size. In other words, smaller the effect size of interest the larger the sample size required to detect. 
-- **Significance level**: probability of observing an effect by chance. In other words, probability of rejecting the null hypothesis when the null hypothesis is true (i.e. claiming there is an effect when there isn't).
+- **Minimum effect size**: in our scenerio, the minimum effect size represents smallest difference that is meaningful for the business. Holding other factors constant, smaller MDEs require larger sample size. 
+- **Significance level**: probability of observing an effect by chance. In other words, probability of rejecting the null hypothesis when the null hypothesis is true (i.e. claiming there is an effect when there isn't). Holding other factors constant, lowering significance level (also called alpha) increasing sample size requirements. Side bar: when our test pvalue is below the pre-specified significance level we reject the null hypothesis in favor of the alternative hypothesis (analysis only at test end when the sample size target is reached).
 - **Power**: probability of detecting an effect when one exists. We call a test underpowered when the sample size is not sufficient to detect an effect size of interest. A test is overpowered when we greatly surpass the target sample size per group.
-- **Time to collect target sample size by group**: varies based on test traffic allocation and experiment surface area popularity. For example, an experiment on Google's home page can hit a sample size target very fast vs a small B2B startup home page which isn't getting much traffic.
+- **Time to collect target sample size by group**: varies based on test traffic allocation and experiment surface area popularity. 
 
 ### Gaining intuition for power
 - We can simulate 10k iterations of an A/B test below.
+- In the simulation scenario below the true effect between the groups is known.
+- However, we will pretend we don't know the true effect size and use sample data to estimate the true effect.
 - For the 10k simulated A/B tests, empirical power represents the proportion of pvalues below our significance level of 0.05. 
 - TODO: NEEDS further research to make sure I'm tracking.
 
 ```{r}
+### fake revenue per visitor metrics
 n <- 50
 c_mu <- 50
 c_s <- 12
@@ -138,7 +141,7 @@ expand_grid(delta_input = seq(1, 5, 0.5),
 
 ### Related topics / further research
 - Variance reduction techniques which can help speed up A/B tests and/or increase statistical power for a test
--
+- 
 
 
 
